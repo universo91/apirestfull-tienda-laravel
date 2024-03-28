@@ -48,9 +48,56 @@ class SellerProductController extends ApiController
         return $this->showOne( $product, 201 );
     }
 
-    public function update(Request $request, Seller $seller)
+    public function update(Request $request, Seller $seller, Product $product)
     {
-        //
+        $rules = [
+            'quantity'  => 'integer|min:1',
+            'status'    => 'in:' . Product::PRODUCTO_DISPONIBLE . ',' . Product::PRODUCTO_NO_DISPONIBLE,
+            'image'     => 'image'
+        ];
+
+        $this->validate($request, $rules);
+
+        if( $seller->id != $product->seller_id )
+        {
+            return $this->errorResponse('El vendedor especificado no es el vendedor real del producto', 422);
+        }
+
+        $product->fill($request->intersect([
+            'name',
+            'description',
+            'quantity'
+        ]));
+
+        /**
+         * Vamos a permitir cambiar el estado si el producto ya tiene asociado al menos una categoria
+         */
+        if( $request->has('status'))
+        {
+            $product->status = $request->status;
+
+            /**
+             *  Despues de haber actualizado es estado, puede ser que el producto no este disonible,
+             * por lo que se tiene que verificar. Ademas se debe verificar que la cantidad de las relaciones
+             * con las categorias deben ser como minimo 1.
+             * */
+            if( $product->estaDisponible() && $product->categorias()->count() == 0)
+            {
+                return $this->errorResponse('Un producto activo debe tener al menos una categoria', 409);
+            }
+        }
+
+        /**
+         * Se verifica si se ha modificado sobre esta instancia
+         */
+        if($product->isClean())
+        {
+            return $this->errorResponse('Se debe especificar al menos un valor diferente para acutualizar', 422);
+        }
+
+        $product->save();
+
+        return $this->showOne( $$product );
     }
 
     public function destroy(Seller $seller)
