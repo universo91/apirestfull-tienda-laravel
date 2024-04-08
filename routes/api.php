@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\buyer\BuyerSellerController;
 use App\Http\Controllers\transaction\TransactionCategoryController;
+use App\Http\Controllers\user\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,3 +55,4 @@ Route::resource('sellers.products', 'seller\SellerProductController', ['except' 
 
 //Users
 Route::resource('users', 'user\UserController', ['except' => ['create', 'edit']]);
+Route::get('user/verify/{token}', [UserController::class, 'verify'])->name('verify');
