@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\ApiController;
+use App\Mail\UserCreated;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ApiController
 {
@@ -118,5 +120,21 @@ class UserController extends ApiController
         $user->save();
 
         return $this->showMessage( 'La cuenta ha sido verificada' );
+    }
+
+    /**
+     * Por algun motivo el usuario no recibio el correo de verificacion, entonces se le
+     * hara un reenvio de dicho correo de verificacion
+     */
+    public function resend(User $user)
+    {
+        if( $user->esVerificado() ) {
+            return $this->errorResponse('Este usuario ya ha sido verificado', 409);
+        }
+
+        // El metodo to reconoce el campo email automaticamente
+        Mail::to( $user )->send( new UserCreated( $user ));
+
+        return $this->showMessage('El correo de verificacion se ha enviado');
     }
 }

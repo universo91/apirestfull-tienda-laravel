@@ -23,6 +23,14 @@ class DatabaseSeeder extends Seeder
         Product::truncate();
         DB::table('category_product')->truncate();
 
+        // flushEventListeners: Elimina todos los escuchadores de eventos del modelo
+        // traduccion: descarga de escuchadores de eventos. En este caso limpia o el
+        // esuchador de eventos del modelo User
+        User::flushEventListeners();
+        Category::flushEventListeners();
+        Product::flushEventListeners();
+        Transaction::flushEventLiseners();
+
         $cantidadUsuarios = 1000;
         $cantidadCategorias = 30;
         $cantidadProductos = 1000;

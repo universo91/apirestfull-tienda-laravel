@@ -45,20 +45,20 @@ class User extends Authenticatable
     ];
 
 
-    //Mutador que cambia el nombre a minuscula
+    //Mutador que cambia el nombre a minuscula cada vez que se registra un Usuario
     public function setNameAttribute($valor)
     {
         $this->attributes['name'] = strtolower( $valor );
     }
 
-    //Accesor
+    //Accesor que cambia a mayusula la primera letra de cada palabra, despues de obtener los datos de la BD
     public function getNameAttribute($valor)
     {
         return ucwords( $valor );
     }
 
     //Mutador que cambia el email a minuscula
-    public function stEmailAttribute( $valor )
+    public function setEmailAttribute( $valor )
     {
         $this->attributes['email'] = strtolower( $valor );
     }
