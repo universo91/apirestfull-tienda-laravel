@@ -29,6 +29,7 @@ class UserCreated extends Mailable
         /**
          * Para crear un titulo o tema la correo electronico lo haremos por medio del metodo subject().
          */
-        return $this->text('emails.welcome')->subject("Por favor confirma tu correo electronico");
+        /* return $this->text('emails.welcome')->subject("Por favor confirma tu correo electronico"); */
+        return $this->markdown('emails.welcome')->subject("Por favor confirma tu correo electronico");
     }
 }
