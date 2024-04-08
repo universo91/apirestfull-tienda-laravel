@@ -132,8 +132,12 @@ class UserController extends ApiController
             return $this->errorResponse('Este usuario ya ha sido verificado', 409);
         }
 
-        // El metodo to reconoce el campo email automaticamente
-        Mail::to( $user )->send( new UserCreated( $user ));
+        retry(5, function() use ($user) {
+            // El metodo to reconoce el campo email automaticamente
+            Mail::to( $user )->send( new UserCreated( $user ));
+
+        }, 100);
+
 
         return $this->showMessage('El correo de verificacion se ha enviado');
     }
